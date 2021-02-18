@@ -1,0 +1,7 @@
+{
+  "name": "schnorrkel-node-perf",
+  "workspaces": [
+    "schnorrkel-bench",
+    "schnorrkel-napi"
+  ]
+}

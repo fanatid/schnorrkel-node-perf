@@ -1,0 +1,14 @@
+{
+  "name": "schnorrkel-napi",
+  "version": "0.1.0",
+  "main": "./schnorrkel-napi.node",
+  "scripts": {
+    "build": "napi build --release"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^1.0.0"
+  },
+  "napi": {
+    "name": "schnorrkel-napi"
+  }
+}

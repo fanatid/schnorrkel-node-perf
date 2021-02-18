@@ -1,0 +1,10 @@
+[package]
+name = "schnorrkel-wrapper"
+version = "0.1.0"
+authors = ["Kirill Fomichev <fanatid@ya.ru>"]
+edition = "2018"
+
+[dependencies]
+schnorrkel = "0.9.1"
+# TODO: asm + avx2
+# schnorrkel = { version = "0.9.1", features = ["asm"] }

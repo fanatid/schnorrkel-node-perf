@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "schnorrkel-bench",
+    "schnorrkel-napi",
+    # "schnorrkel-v8",
+    # "schnorrkel-wasm",
+    "schnorrkel-wrapper",
+]

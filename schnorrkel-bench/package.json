@@ -1,0 +1,12 @@
+{
+  "name": "schnorrkel-bench",
+  "version": "0.1.0",
+  "scripts": {
+    "bench": "node ./schnorrkel.js",
+    "format": "prettier -w ."
+  },
+  "devDependencies": {
+    "benchmark": "^2.1.4",
+    "prettier": "^2.2.1"
+  }
+}

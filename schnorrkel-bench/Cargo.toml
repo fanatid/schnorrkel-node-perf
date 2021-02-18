@@ -1,0 +1,18 @@
+[package]
+name = "schnorrkel-bench"
+version = "0.1.0"
+authors = ["Kirill Fomichev <fanatid@ya.ru>"]
+edition = "2018"
+
+[dependencies]
+schnorrkel = { package = "schnorrkel-wrapper", path = "../schnorrkel-wrapper" }
+
+[dev-dependencies]
+criterion = { version = "0.3", features = ["html_reports"] }
+rand = "0.8"
+sha2 = "0.9"
+
+[[bench]]
+name = "schnorrkel"
+path = "schnorrkel.rs"
+harness = false
