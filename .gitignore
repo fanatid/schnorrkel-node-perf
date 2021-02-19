@@ -1,3 +1,4 @@
 /node_modules
 /schnorrkel-napi/schnorrkel-napi.node
+/schnorrkel-wasm/pkg
 /target

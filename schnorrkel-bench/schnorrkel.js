@@ -1,8 +1,8 @@
 const assert = require("assert");
 const crypto = require("crypto");
-const benchmark = require("benchmark");
-const napi = require("../schnorrkel-napi");
 const { Suite } = require("benchmark");
+const napi = require("../schnorrkel-napi");
+const wasm = require("../schnorrkel-wasm/pkg");
 
 function make_hash(input) {
   return crypto.createHash("sha256").update(input).digest();
@@ -71,27 +71,7 @@ function generate_input() {
 
 const input = generate_input();
 new Suite()
-  .add("stateless/sign", () => {
-    for (const item of input) {
-      napi.stateless.sign(
-        item.context_bytes,
-        item.seckey_bytes,
-        item.pubkey_bytes,
-        item.messages[0]
-      );
-    }
-  })
-  .add("stateless/verify", () => {
-    for (const item of input) {
-      napi.stateless.verify(
-        item.context_bytes,
-        item.pubkey_bytes,
-        item.messages[0],
-        item.signatures_bytes[0]
-      );
-    }
-  })
-  .add("stateful/sign", () => {
+  .add("napi/stateful/sign", () => {
     for (let i = 0; i < 10; ++i) {
       const item = input[i];
       for (const message of item.messages) {
@@ -99,7 +79,7 @@ new Suite()
       }
     }
   })
-  .add("stateful/verify", () => {
+  .add("napi/stateful/verify", () => {
     for (let i = 0; i < 10; ++i) {
       const item = input[i];
       for (let j = 0; j < item.messages.length; ++j) {
@@ -109,6 +89,50 @@ new Suite()
           napi.stateful.verify(item.context, item.pubkey, message, signature)
         );
       }
+    }
+  })
+  .add("napi/stateless/sign", () => {
+    for (const item of input) {
+      napi.stateless.sign(
+        item.context_bytes,
+        item.seckey_bytes,
+        item.pubkey_bytes,
+        item.messages[0]
+      );
+    }
+  })
+  .add("napi/stateless/verify", () => {
+    for (const item of input) {
+      assert(
+        napi.stateless.verify(
+          item.context_bytes,
+          item.pubkey_bytes,
+          item.messages[0],
+          item.signatures_bytes[0]
+        )
+      );
+    }
+  })
+  .add("wasm/stateless/sign", () => {
+    for (const item of input) {
+      wasm.stateless_sign(
+        item.context_bytes,
+        item.seckey_bytes,
+        item.pubkey_bytes,
+        item.messages[0]
+      );
+    }
+  })
+  .add("wasm/stateless/verify", () => {
+    for (const item of input) {
+      assert(
+        wasm.stateless_verify(
+          item.context_bytes,
+          item.pubkey_bytes,
+          item.messages[0],
+          item.signatures_bytes[0]
+        )
+      );
     }
   })
   .on("cycle", (event) => console.log(String(event.target)))
