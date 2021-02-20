@@ -1,10 +1,12 @@
 bench: build
-	export SEED=DWHFeX6QLfsy3pe6xoCH0ONdsnAgNjv2 && cd schnorrkel-bench && cargo bench && npm run bench
+bench: export SEED=DWHFeX6QLfsy3pe6xoCH0ONdsnAgNjv2
+bench:
+	cd schnorrkel-bench && RUSTFLAGS="-C target_feature=+avx2" cargo bench && npm run bench
 
 build: format
-	cd schnorrkel-bench && cargo bench --no-run
-	cd schnorrkel-napi && npm run build
-	cd schnorrkel-neon && npm run build
+	cd schnorrkel-bench && RUSTFLAGS="-C target_feature=+avx2" cargo bench --no-run
+	cd schnorrkel-napi && RUSTFLAGS="-C target_feature=+avx2" npm run build
+	cd schnorrkel-neon && RUSTFLAGS="-C target_feature=+avx2" npm run build
 	cd schnorrkel-wasm && make build
 
 format:
