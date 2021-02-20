@@ -1,4 +1,6 @@
 /node_modules
 /schnorrkel-napi/schnorrkel-napi.node
+/schnorrkel-neon/native/artifacts.json
+/schnorrkel-neon/native/index.node
 /schnorrkel-wasm/pkg
 /target

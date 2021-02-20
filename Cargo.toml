@@ -2,7 +2,7 @@
 members = [
     "schnorrkel-bench",
     "schnorrkel-napi",
-    # "schnorrkel-v8",
+    "schnorrkel-neon/native",
     "schnorrkel-wasm",
     "schnorrkel-wrapper",
 ]

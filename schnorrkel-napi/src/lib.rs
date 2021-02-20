@@ -1,11 +1,14 @@
 #[macro_use]
 extern crate napi_derive;
 
-use napi::{CallContext, JsObject, JsBuffer, Result as NResult, Env, JsBoolean};
-use schnorrkel::{MiniSecretKey, ExpansionMode, signing_context, context::SigningContext, SecretKey, PublicKey, Signature};
+use napi::{CallContext, Env, JsBoolean, JsBuffer, JsObject, Result as NapiResult};
+use schnorrkel::{
+    context::SigningContext, signing_context, ExpansionMode, MiniSecretKey, PublicKey, SecretKey,
+    Signature,
+};
 
 #[module_exports]
-fn init(mut exports: JsObject, env: Env) -> NResult<()> {
+fn init(mut exports: JsObject, env: Env) -> NapiResult<()> {
     let mut stateful = env.create_object()?;
     stateful.create_named_method("create_context", create_context)?;
     stateful.create_named_method("generate_pair", generate_pair)?;
@@ -22,7 +25,7 @@ fn init(mut exports: JsObject, env: Env) -> NResult<()> {
 }
 
 #[js_function(1)]
-fn create_context(ctx: CallContext) -> NResult<JsObject> {
+fn create_context(ctx: CallContext) -> NapiResult<JsObject> {
     let context_bytes = ctx.get::<JsBuffer>(0)?.into_value()?;
     let context = signing_context(&context_bytes);
 
@@ -32,7 +35,7 @@ fn create_context(ctx: CallContext) -> NResult<JsObject> {
 }
 
 #[js_function(1)]
-fn generate_pair(ctx: CallContext) -> NResult<JsObject> {
+fn generate_pair(ctx: CallContext) -> NapiResult<JsObject> {
     let seed = ctx.get::<JsBuffer>(0)?.into_value()?;
     let mini_seckey = MiniSecretKey::from_bytes(&seed).expect("valid seed for MiniSecretKey");
     let keypair = mini_seckey.expand_to_keypair(ExpansionMode::Uniform);
@@ -59,7 +62,7 @@ fn generate_pair(ctx: CallContext) -> NResult<JsObject> {
 }
 
 #[js_function(4)]
-fn stateful_sign(ctx: CallContext) -> NResult<JsObject> {
+fn stateful_sign(ctx: CallContext) -> NapiResult<JsObject> {
     let context = ctx.env.unwrap::<SigningContext>(&ctx.get::<JsObject>(0)?)?;
     let seckey = ctx.env.unwrap::<SecretKey>(&ctx.get::<JsObject>(1)?)?;
     let pubkey = ctx.env.unwrap::<PublicKey>(&ctx.get::<JsObject>(2)?)?;
@@ -70,7 +73,7 @@ fn stateful_sign(ctx: CallContext) -> NResult<JsObject> {
 }
 
 #[js_function(4)]
-fn stateful_verify(ctx: CallContext) -> NResult<JsBoolean> {
+fn stateful_verify(ctx: CallContext) -> NapiResult<JsBoolean> {
     let context = ctx.env.unwrap::<SigningContext>(&ctx.get::<JsObject>(0)?)?;
     let pubkey = ctx.env.unwrap::<PublicKey>(&ctx.get::<JsObject>(1)?)?;
     let message = ctx.get::<JsBuffer>(2)?.into_value()?;
@@ -81,12 +84,12 @@ fn stateful_verify(ctx: CallContext) -> NResult<JsBoolean> {
 }
 
 #[js_function(4)]
-fn stateless_sign(ctx: CallContext) -> NResult<JsObject> {
+fn stateless_sign(ctx: CallContext) -> NapiResult<JsObject> {
     let context_bytes = ctx.get::<JsBuffer>(0)?.into_value()?;
     let seckey_bytes = ctx.get::<JsBuffer>(1)?.into_value()?;
     let pubkey_bytes = ctx.get::<JsBuffer>(2)?.into_value()?;
     let message = ctx.get::<JsBuffer>(3)?.into_value()?;
-    
+
     let context = signing_context(&context_bytes);
     let seckey = SecretKey::from_bytes(&seckey_bytes).expect("valid seckey");
     let pubkey = PublicKey::from_bytes(&pubkey_bytes).expect("valid pubkey");
@@ -96,7 +99,7 @@ fn stateless_sign(ctx: CallContext) -> NResult<JsObject> {
 }
 
 #[js_function(4)]
-fn stateless_verify(ctx: CallContext) -> NResult<JsBoolean> {
+fn stateless_verify(ctx: CallContext) -> NapiResult<JsBoolean> {
     let context_bytes = ctx.get::<JsBuffer>(0)?.into_value()?;
     let pubkey_bytes = ctx.get::<JsBuffer>(1)?.into_value()?;
     let message = ctx.get::<JsBuffer>(2)?.into_value()?;
@@ -110,7 +113,7 @@ fn stateless_verify(ctx: CallContext) -> NResult<JsBoolean> {
     ctx.env.get_boolean(is_valid)
 }
 
-fn signature2object(env: &Env, signature: Signature) -> NResult<JsObject> {
+fn signature2object(env: &Env, signature: Signature) -> NapiResult<JsObject> {
     let mut result = env.create_object()?;
 
     let signature_bytes = env.create_buffer_copy(signature.to_bytes())?.into_raw();

@@ -2,6 +2,7 @@
   "name": "schnorrkel-node-perf",
   "workspaces": [
     "schnorrkel-bench",
-    "schnorrkel-napi"
+    "schnorrkel-napi",
+    "schnorrkel-neon"
   ]
 }

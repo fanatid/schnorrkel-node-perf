@@ -1,0 +1,17 @@
+[package]
+name = "schnorrkel-neon"
+version = "0.1.0"
+authors = ["Kirill Fomichev <fanatid@ya.ru>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib"]
+name = "schnorrkel_neon"
+
+[dependencies]
+neon = "0.7.1"
+schnorrkel = { package = "schnorrkel-wrapper", path = "../../schnorrkel-wrapper" }
+
+[build-dependencies]
+neon-build = "0.7.1"
+

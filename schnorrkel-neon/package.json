@@ -1,0 +1,11 @@
+{
+  "name": "schnorrkel-neon",
+  "version": "0.1.0",
+  "main": "./native/index.node",
+  "scripts": {
+    "build": "neon build --release"
+  },
+  "devDependencies": {
+    "neon-cli": "^0.7.1"
+  }
+}

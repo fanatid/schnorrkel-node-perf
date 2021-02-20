@@ -2,6 +2,7 @@ const assert = require("assert");
 const crypto = require("crypto");
 const { Suite } = require("benchmark");
 const napi = require("../schnorrkel-napi");
+const neon = require("../schnorrkel-neon");
 const wasm = require("../schnorrkel-wasm/pkg");
 
 function make_hash(input) {
@@ -11,13 +12,13 @@ function make_hash(input) {
 function generate_seed() {
   let seed = "";
   while (seed.length < 32) {
-    const byte = crypto.randomBytes(1)[0];
+    const byte = String.fromCharCode(crypto.randomBytes(1)[0]);
     if (
-      ("0" >= byte && "9" <= byte) ||
-      ("a" >= byte && "z" <= byte) ||
-      ("A" >= byte && "Z" <= byte)
+      (byte >= "0" && byte <= "9") ||
+      (byte >= "a" && byte <= "z") ||
+      (byte >= "A" && byte <= "Z")
     ) {
-      seed += String.fromCharCode(byte);
+      seed += byte;
     }
   }
   return seed;
@@ -105,6 +106,28 @@ new Suite()
     for (const item of input) {
       assert(
         napi.stateless.verify(
+          item.context_bytes,
+          item.pubkey_bytes,
+          item.messages[0],
+          item.signatures_bytes[0]
+        )
+      );
+    }
+  })
+  .add("neon/stateless/sign", () => {
+    for (const item of input) {
+      neon.stateless.sign(
+        item.context_bytes,
+        item.seckey_bytes,
+        item.pubkey_bytes,
+        item.messages[0]
+      );
+    }
+  })
+  .add("neon/stateless/verify", () => {
+    for (const item of input) {
+      assert(
+        neon.stateless.verify(
           item.context_bytes,
           item.pubkey_bytes,
           item.messages[0],
